@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Vue</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+
+        <!-- Bootstrap CSS v5.2.1 -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+    </head>
+
+    <body>
+        <div class="container" id="app">
+            <div class="row my-5">
+                <div class="col-8"><input type="text" v-model="input" placeholder="ingresa un color" class="form-control"></div>
+
+                <div class="col-4 text-end">
+                    <button type="button" @click="agregar()" class="btn btn-success">Guardar</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between" v-for="(color,i) in colores"><div>{{color}}</div><div><button class="btn btn-warning btn-sm" @click="editar(i)">🖋️</button><button class="btn btn-danger btn-sm" @click="borrar(i)">✂️</button> </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+            <!-- place footer here -->
+        </footer>
+        <!-- Bootstrap JavaScript Libraries -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"
+        ></script>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+            crossorigin="anonymous"
+        ></script>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script>
+            const {createApp, ref }= Vue;
+            createApp({
+                setup(){
+                    const colores = ref(JSON.parse(localStorage.getItem("colores"))||[]);
+                    let input = ref("");
+                    let posicion = null
+
+
+
+
+                    const agregar = () => {
+                        if (posicion !== null) {
+
+                          colores.value[posicion] = input.value;
+                          posicion = null;
+                        } else {
+                            if(input.value !== "") {
+                                colores.value.push(input.value)
+                            } else {
+                                alert("Debe llenar el campo")
+                                return;
+                            }
+                        }
+                        localStorage.setItem("colores", JSON.stringify(colores.value));
+                        input.value ="";
+
+                    }
+
+                    const borrar = (i) => {
+                        let confirmacion = confirm("Deseas eliminar este item?")
+                        if(confirmacion) {
+                            colores.value.splice(i,1)
+                            localStorage.setItem("colores", JSON.stringify(colores.value));
+                        }
+
+                    }
+
+                    const editar = (i) => {
+                        input.value = colores.value[i];
+                        posicion = i;
+
+                    }
+
+                return{
+                   colores,
+                   input,
+                   agregar,
+                   borrar,
+                   editar
+                }
+                }
+            }).mount("#app")
+
+        </script>
+    </body>
+</html>
